@@ -19,7 +19,7 @@ export const passages: Passage[] = [
       { id: 3, korean: '한 예로 멕시코 칸쿤에 있는 수중 박물관이 있다.', sentence: 'One ___BLANK___ is an ___BLANK___ ___BLANK___ in Cancun, Mexico.', answers: ['example', 'underwater', 'museum'] },
       { id: 4, korean: '미술학 교수인 Rosa Allison 박사를 만나 이 특별한 박물관에 관한 설명을 들어 보자.', sentence: "Let\u2019s meet Dr. Rosa Allison, an art ___BLANK___, and listen to her ___BLANK___ about the special museum.", answers: ['professor', 'explanation'] },
       { id: 5, korean: '칸쿤은 매년 480만 명의 관광객이 여행하는 도시입니다.', sentence: 'Cancun is a city where 4.8 million ___BLANK___ ___BLANK___ every year.', answers: ['tourists', 'travel'] },
-      { id: 6, korean: '그곳에서 하는 가장 인기 있는 활동 중 하나는 물속에서 그 지역의 아름다운 해양 생물을 보는 것입니다.', sentence: "One of the most ___BLANK___ ___BLANK___ to do there is looking at the area\u2019s beautiful ___BLANK___ ___BLANK___ ___BLANK___.", answers: ['popular', 'activities', 'sea life', 'underwater'] },
+      { id: 6, korean: '그곳에서 하는 가장 인기 있는 활동 중 하나는 물속에서 그 지역의 아름다운 해양 생물을 보는 것입니다.', sentence: "One of the most ___BLANK___ ___BLANK___ to do there is looking at the area\u2019s beautiful ___BLANK___ ___BLANK___ ___BLANK___.", answers: ['popular', 'activities', 'sea', 'life', 'underwater'] },
       { id: 7, korean: '하지만 관광 활동들은 칸쿤 인근의 바다 일부를 심각하게 훼손하고 있습니다.', sentence: 'However, tourist activities are ___BLANK___ ___BLANK___ ___BLANK___ of the sea ___BLANK___ Cancun.', answers: ['seriously', 'damaging', 'parts', 'near'] },
     ]
   },
@@ -58,7 +58,7 @@ export const passages: Passage[] = [
       { id: 4, korean: '그것들이 이 새로운 건축 양식의 목표입니다.', sentence: 'Those are the ___BLANK___ of this new ___BLANK___ of architecture.', answers: ['goals', 'style'] },
       { id: 5, korean: '바라건대, 건축가들은 계속해서 새로운 친환경 아이디어를 생각해낼 것입니다.', sentence: '___BLANK___, architects will keep ___BLANK___ ___BLANK___ ___BLANK___ new eco\u2011friendly ideas.', answers: ['Hopefully', 'coming', 'up', 'with'] },
       { id: 6, korean: '모든 분야에는 환경을 보호하는 각기 다른 방법이 있다.', sentence: 'Every ___BLANK___ has different ___BLANK___ of protecting the environment.', answers: ['field', 'ways'] },
-      { id: 7, korean: '더 많은 혁신으로, 먼 미래에 인간과 자연은 함께 조화를 이루며 살아갈 수 있을 것이다.', sentence: 'With more ___BLANK___, humans and ___BLANK___ will be able to live together ___BLANK___ ___BLANK___ far into the future.', answers: ['innovation', 'nature', 'in', 'harmony'] },
+      { id: 7, korean: '더 많은 혁신으로, 먼 미래에 인간과 자연은 함께 조화를 이루며 살아갈 수 있을 것이다.', sentence: 'With more ___BLANK___, humans and ___BLANK___ will be able to live together ___BLANK___ ___BLANK___ ___BLANK___ ___BLANK___ ___BLANK___ ___BLANK___.', answers: ['innovation', 'nature', 'in', 'harmony', 'far', 'into', 'the', 'future'] },
     ]
   },
 ];
