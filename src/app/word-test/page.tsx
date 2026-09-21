@@ -1,8 +1,6 @@
 "use client";
-
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-// We use type any or default mock until data is ready
 import { wordList } from "@/data/words";
 
 export default function WordTestPage() {
@@ -13,184 +11,117 @@ export default function WordTestPage() {
   const [wrongAnswers, setWrongAnswers] = useState<any[]>([]);
   const [isFinished, setIsFinished] = useState(false);
   const [score, setScore] = useState(0);
-  
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Auto focus input
-  useEffect(() => {
-    if (!isChecked && !isFinished) {
-      inputRef.current?.focus();
-    }
-  }, [currentIndex, isChecked, isFinished]);
+  useEffect(() => { if (!isChecked && !isFinished) inputRef.current?.focus(); }, [currentIndex, isChecked, isFinished]);
 
-  if (!wordList || wordList.length === 0) {
-    return <div className="p-6">데이터를 불러오는 중입니다...</div>;
-  }
+  if (!wordList || wordList.length === 0) return <div className="p-6">로딩중...</div>;
 
-  const currentWord = wordList[currentIndex];
-  const totalWords = wordList.length;
+  const current = wordList[currentIndex];
+  const total = wordList.length;
+  const pct = Math.round((currentIndex / total) * 100);
 
   const handleCheck = () => {
     if (!inputValue.trim()) return;
-    
-    const correct = inputValue.trim().toLowerCase() === currentWord.english.trim().toLowerCase();
-    setIsCorrect(correct);
-    setIsChecked(true);
-    
-    if (correct) {
-      setScore(prev => prev + 1);
-    } else {
-      setWrongAnswers(prev => [...prev, { ...currentWord, userInput: inputValue }]);
-    }
+    const correct = inputValue.trim().toLowerCase() === current.english.trim().toLowerCase();
+    setIsCorrect(correct); setIsChecked(true);
+    if (correct) setScore(s => s + 1);
+    else setWrongAnswers(p => [...p, { ...current, userInput: inputValue }]);
   };
-
   const handleNext = () => {
-    if (currentIndex < totalWords - 1) {
-      setCurrentIndex(prev => prev + 1);
-      setInputValue("");
-      setIsChecked(false);
-    } else {
-      setIsFinished(true);
-    }
+    if (currentIndex < total - 1) { setCurrentIndex(i => i + 1); setInputValue(""); setIsChecked(false); }
+    else setIsFinished(true);
   };
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
-      if (isChecked) {
-        handleNext();
-      } else {
-        handleCheck();
-      }
-    }
-  };
-
-  const handleRetry = () => {
-    setCurrentIndex(0);
-    setInputValue("");
-    setIsChecked(false);
-    setIsCorrect(false);
-    setWrongAnswers([]);
-    setIsFinished(false);
-    setScore(0);
-  };
+  const handleKeyDown = (e: React.KeyboardEvent) => { if (e.key === "Enter") { isChecked ? handleNext() : handleCheck(); } };
+  const handleRetry = () => { setCurrentIndex(0); setInputValue(""); setIsChecked(false); setIsCorrect(false); setWrongAnswers([]); setIsFinished(false); setScore(0); };
 
   if (isFinished) {
+    const scorePct = Math.round((score / total) * 100);
     return (
-      <div className="p-6 flex flex-col min-h-screen">
-        <header className="flex justify-between items-center mb-8 pt-4">
-          <Link href="/" className="text-blue-500 font-medium px-2 py-1 -ml-2 rounded active:bg-blue-50">← 메인으로</Link>
-          <h1 className="font-bold text-lg">학습 결과</h1>
+      <div className="flex flex-col min-h-screen px-5 py-6 animate-fade-in">
+        <header className="flex items-center justify-between mb-6">
+          <Link href="/" className="text-indigo-500 font-semibold text-sm">← 메인</Link>
+          <h1 className="font-bold text-slate-700">학습 결과</h1>
+          <div className="w-12" />
         </header>
-
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-8 text-center mb-6">
-          <div className="text-5xl mb-4">🏆</div>
-          <h2 className="text-2xl font-bold mb-2">총 {totalWords}문제 중 {score}문제 정답!</h2>
-          <p className="text-slate-500 text-lg">정답률: {Math.round((score / totalWords) * 100)}%</p>
+        <div className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-3xl p-8 text-center text-white shadow-xl mb-6">
+          <div className="text-6xl mb-3">{scorePct >= 80 ? "🎉" : scorePct >= 50 ? "💪" : "📚"}</div>
+          <div className="text-5xl font-extrabold mb-1">{scorePct}%</div>
+          <p className="text-white/80 text-lg">{total}문제 중 {score}문제 정답</p>
         </div>
-
         {wrongAnswers.length > 0 && (
-          <div className="mb-8">
-            <h3 className="font-bold text-lg mb-4 text-red-500">틀린 단어 복습 ({wrongAnswers.length}개)</h3>
-            <div className="flex flex-col gap-3">
+          <div className="mb-6">
+            <h3 className="font-bold text-rose-500 mb-3 text-sm">❌ 틀린 단어 ({wrongAnswers.length}개)</h3>
+            <div className="flex flex-col gap-2">
               {wrongAnswers.map((w, i) => (
-                <div key={i} className="bg-red-50 p-4 rounded-xl border border-red-100 flex justify-between items-center">
+                <div key={i} className="bg-rose-50 border border-rose-100 rounded-xl p-3 flex justify-between items-center">
                   <div>
-                    <p className="font-bold text-slate-800">{w.korean}</p>
-                    <p className="text-sm text-red-500 line-through mt-1">{w.userInput}</p>
+                    <p className="font-bold text-slate-700 text-sm">{w.korean}</p>
+                    <p className="text-xs text-rose-400 line-through">{w.userInput}</p>
                   </div>
-                  <div className="text-right">
-                    <p className="font-bold text-green-600 text-lg">{w.english}</p>
-                  </div>
+                  <p className="font-bold text-emerald-600">{w.english}</p>
                 </div>
               ))}
             </div>
           </div>
         )}
-
-        <div className="mt-auto pt-6 pb-6">
-          <button 
-            onClick={handleRetry}
-            className="w-full h-14 bg-blue-500 text-white rounded-xl font-bold text-lg hover:bg-blue-600 active:scale-[0.98] transition-all"
-          >
-            다시 학습하기
-          </button>
+        <div className="mt-auto pb-4">
+          <button onClick={handleRetry} className="w-full h-14 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-2xl font-bold text-lg shadow-lg active:scale-[0.97] transition-transform">다시 학습하기</button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col min-h-screen p-6">
-      <header className="flex justify-between items-center mb-6 pt-4">
-        <Link href="/" className="text-slate-500 px-2 py-1 -ml-2 rounded active:bg-slate-100">✕ 닫기</Link>
-        <div className="font-medium text-slate-600">
-          <span className="text-blue-500 font-bold">{currentIndex + 1}</span> / {totalWords}
-        </div>
+    <div className="flex flex-col min-h-screen px-5 py-4">
+      <header className="flex items-center justify-between mb-2 pt-2">
+        <Link href="/" className="text-slate-400 text-sm font-medium">✕</Link>
+        <span className="text-xs font-bold bg-indigo-100 text-indigo-600 px-3 py-1 rounded-full">{currentIndex + 1} / {total}</span>
       </header>
 
-      {/* Progress bar */}
-      <div className="w-full bg-slate-100 h-2 rounded-full mb-10 overflow-hidden">
-        <div 
-          className="bg-blue-500 h-full transition-all duration-300 ease-out" 
-          style={{ width: `${((currentIndex) / totalWords) * 100}%` }}
-        />
+      <div className="relative w-full h-2 bg-slate-100 rounded-full mb-8 overflow-hidden">
+        <div className="absolute inset-y-0 left-0 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full transition-all duration-500" style={{ width: `${pct}%` }} />
       </div>
 
-      <main className="flex-1 flex flex-col justify-center max-w-sm w-full mx-auto pb-20">
-        <div className="text-center mb-10">
-          <h2 className="text-3xl font-bold text-slate-800 break-keep">{currentWord.korean}</h2>
+      <main className="flex-1 flex flex-col items-center justify-center pb-24 animate-fade-in" key={currentIndex}>
+        <div className="w-full bg-white rounded-2xl shadow-sm border-l-4 border-indigo-500 p-6 mb-8">
+          <p className="text-xs text-indigo-400 font-bold mb-2 uppercase tracking-wider">한글 뜻</p>
+          <h2 className="text-2xl font-extrabold text-slate-800 break-keep">{current.korean}</h2>
         </div>
 
-        <div className="mb-6 relative">
-          <input
-            ref={inputRef}
-            type="text"
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            onKeyDown={handleKeyDown}
-            disabled={isChecked}
-            placeholder="영단어를 입력하세요"
-            className={`w-full text-center h-16 text-xl font-medium border-2 rounded-2xl focus:outline-none transition-colors
-              ${isChecked 
-                ? isCorrect 
-                  ? 'border-green-500 bg-green-50 text-green-700' 
-                  : 'border-red-500 bg-red-50 text-red-700'
-                : 'border-slate-200 focus:border-blue-500 focus:bg-blue-50'
-              }`}
-            autoComplete="off"
-            spellCheck="false"
-            autoCapitalize="none"
+        <div className="w-full mb-4">
+          <input ref={inputRef} type="text" value={inputValue} onChange={e => setInputValue(e.target.value)} onKeyDown={handleKeyDown}
+            disabled={isChecked} placeholder="영단어를 입력하세요" autoComplete="off" spellCheck="false" autoCapitalize="none"
+            className={`w-full text-center text-xl font-semibold py-4 bg-transparent border-b-3 outline-none transition-all placeholder:text-slate-300
+              ${isChecked ? (isCorrect ? 'border-emerald-500 text-emerald-600' : 'border-rose-500 text-rose-600') : 'border-slate-200 focus:border-indigo-500'}`}
           />
         </div>
 
-        {isChecked && !isCorrect && (
-          <div className="text-center mb-6 animate-fade-in">
-            <p className="text-sm text-slate-500 mb-1">정답은</p>
-            <p className="text-2xl font-bold text-green-500">{currentWord.english}</p>
+        {isChecked && (
+          <div className={`w-full rounded-2xl p-4 text-center animate-fade-in ${isCorrect ? 'bg-emerald-50 border border-emerald-200' : 'bg-rose-50 border border-rose-200'}`}>
+            {isCorrect ? (
+              <p className="text-emerald-600 font-bold text-lg">✅ 정답!</p>
+            ) : (
+              <div>
+                <p className="text-rose-500 font-bold mb-1">오답</p>
+                <p className="text-emerald-600 font-bold text-xl">{current.english}</p>
+              </div>
+            )}
           </div>
         )}
+      </main>
 
-        <div className="mt-4">
+      <div className="fixed bottom-0 left-0 right-0 p-4 z-20">
+        <div className="max-w-lg mx-auto">
           {!isChecked ? (
-            <button
-              onClick={handleCheck}
-              disabled={!inputValue.trim()}
-              className="w-full h-14 bg-slate-800 text-white rounded-xl font-bold text-lg hover:bg-slate-700 active:scale-[0.98] transition-all disabled:opacity-50 disabled:active:scale-100"
-            >
-              확인
-            </button>
+            <button onClick={handleCheck} disabled={!inputValue.trim()}
+              className="w-full h-14 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-2xl font-bold text-lg shadow-lg disabled:opacity-40 active:scale-[0.97] transition-all">확인</button>
           ) : (
-            <button
-              onClick={handleNext}
-              className={`w-full h-14 text-white rounded-xl font-bold text-lg active:scale-[0.98] transition-all
-                ${isCorrect ? 'bg-green-500 hover:bg-green-600' : 'bg-red-500 hover:bg-red-600'}
-              `}
-            >
-              다음
-            </button>
+            <button onClick={handleNext}
+              className={`w-full h-14 text-white rounded-2xl font-bold text-lg shadow-lg active:scale-[0.97] transition-all ${isCorrect ? 'bg-gradient-to-r from-emerald-500 to-teal-600' : 'bg-gradient-to-r from-rose-500 to-pink-600'}`}>다음</button>
           )}
         </div>
-      </main>
+      </div>
     </div>
   );
 }
